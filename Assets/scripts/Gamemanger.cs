@@ -11,18 +11,44 @@ public class Gamemanger : MonoBehaviour
     public GameObject Diamondprefab;
     public GameObject whitscreen;
     int currentscore;
+    int Highscore;
     GameObject[] gameObjects=new GameObject[2];
 
+    List<GameObject> prefs = new List<GameObject>();
     public Text score;
+    public Text Highscoretext;
     private void Start()
     {
         currentscore = 0;
         gameObjects[0] = currentprefab;
         gameObjects[1] = Diamondprefab;
-        for(int i =0;i<5000;i++)
+        Highscore =  PlayerPrefs.GetInt("Highscore");
+        //for(int i =0;i<10;i++)
              spwantile();
     }
-  
+    private void Update()
+    {
+      if(holdspawn)
+        {
+            return;
+        }
+        //Destroy(prefs[0], 2f);
+       
+        StartCoroutine(spawn());
+    }
+    bool holdspawn;
+    IEnumerator spawn()
+    {   
+        holdspawn = true;
+        for (int i = 0; i < 15; i++)
+        {
+            spwantile();
+                       
+        }
+        yield return new WaitForSeconds(3f);
+        holdspawn = false;
+    }
+    
     public void restartpressed()
     {
         Time.timeScale = 1;
@@ -43,14 +69,32 @@ public class Gamemanger : MonoBehaviour
     }
     public void spwantile()
     {
-        currentprefab= Instantiate(gameObjects[Random.Range(0,2)],
+        
+            currentprefab = Instantiate(gameObjects[Random.Range(0,2)],
            currentprefab.transform.GetChild(Random.Range(0, 6)).position, Quaternion.identity);
+        prefs.Add(currentprefab);
+        if(prefs.Count > 5 )
+        {
+           
+            for(int i =0;i <=5;i++)
 
+            Destroy(prefs[i],10f);
+            prefs.Clear();
+        }
+       
     }
+    
 
     public void increasscore()
     {
         currentscore++;
         score.text = currentscore.ToString() ;
+        if(currentscore > Highscore)
+        {
+            Highscore = currentscore;
+            PlayerPrefs.SetInt("Highscore", Highscore);
+        }
+        Highscoretext.text = Highscore.ToString();
+
     }
 }

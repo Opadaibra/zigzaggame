@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class player : MonoBehaviour
 {
+   [SerializeField] GameObject particls;
     Rigidbody rigidbody;
-    float speed = 1400;
+    float speed = 1700;
     bool left = false;
-
+    Gamemanger gamemanger;
     Vector3 defaultvector;
+    bool isgameover;
     private void Start()
     {
+        isgameover = false;
         rigidbody = GetComponent<Rigidbody>();
         defaultvector = Vector3.zero;
     }
@@ -18,12 +21,17 @@ public class player : MonoBehaviour
     {
         if (other.tag == "end")
         {
-            Invoke("gameoverfunc", 2f);
+            isgameover = true;
+            Invoke("gameoverfunc", 1f);
+            Time.timeScale = 0.5f;
         }
         if(other.tag=="diamond")
         {
             FindObjectOfType<Gamemanger>().increasscore();
             Destroy(other.gameObject);
+            FindObjectOfType<AudioManger>().play("Diamond");
+            GameObject currentparticle = Instantiate(particls, other.transform.position, Quaternion.identity);
+            Destroy(currentparticle, 2f);
         }
     }
     void gameoverfunc()
@@ -35,15 +43,31 @@ public class player : MonoBehaviour
     {
 
         rigidbody.AddForce(defaultvector * Time.deltaTime *speed);
-        if(Input.GetKeyDown(KeyCode.Space)&& !left)
+        if(defaultvector == Vector3.zero)
+        {
+            print("Sadfsghjh");
+            Time.timeScale = 0;
+        }
+        else
+        {
+            if(!isgameover)
+               Time.timeScale = 1;
+
+        }
+        
+        if(Input.touchCount > 0&&Input.GetTouch(0).phase ==TouchPhase.Ended  && !left)
         {
 
             defaultvector = Vector3.left;
+            
+                  FindObjectOfType<AudioManger>().play("click");
             left = true;
         }
-        else if(Input.GetKeyDown(KeyCode.Space)&& left)
+        else if(Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && left)
         {
             defaultvector = Vector3.forward;
+
+            FindObjectOfType<AudioManger>().play("click");
             left = false;
         }
     }
