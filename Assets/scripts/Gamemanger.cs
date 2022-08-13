@@ -45,7 +45,7 @@ public class Gamemanger : MonoBehaviour
             spwantile();
                        
         }
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(5f);
         holdspawn = false;
     }
     
@@ -73,10 +73,10 @@ public class Gamemanger : MonoBehaviour
             currentprefab = Instantiate(gameObjects[Random.Range(0,2)],
            currentprefab.transform.GetChild(Random.Range(0, 6)).position, Quaternion.identity);
         prefs.Add(currentprefab);
-        if(prefs.Count > 5 )
+        if(prefs.Count > 10 )
         {
            
-            for(int i =0;i <=5;i++)
+            for(int i =0;i <=10;i++)
 
             Destroy(prefs[i],10f);
             prefs.Clear();
